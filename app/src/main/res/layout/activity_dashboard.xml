@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".module.dashboard.DashboardActivity"
+    android:background="@color/colorMyCap">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_roomcode"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/_50sdp"
+        android:background="@drawable/search_box"
+        android:layout_marginTop="@dimen/_100sdp"
+        android:padding="@dimen/_10sdp">
+
+        <EditText
+            android:id="@+id/et_room_code"
+            android:layout_width="@dimen/_100sdp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btn_join"
+            android:hint="@string/room_code"/>
+
+        <Button
+            android:id="@+id/btn_join"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/colorMyCap"
+            android:text="@string/join"
+            android:textColor="@color/colorWhite"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/et_room_code"
+            android:layout_marginLeft="@dimen/_30sdp"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/tv_create"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/create"
+        android:textColor="@color/colorWhite"
+        android:textSize="@dimen/_22sdp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layout_roomcode"
+        android:layout_marginTop="@dimen/_50sdp"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_200sdp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/iv_microphone"
+        app:layout_constraintTop_toBottomOf="@id/tv_create"
+        app:layout_constraintBottom_toTopOf="@id/iv_microphone">
+
+        <LinearLayout
+            android:id="@+id/layout_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/layout_classroom">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardview_group_chat"
+                android:layout_width="@dimen/_100sdp"
+                android:layout_height="@dimen/_100sdp">
+
+                <ImageView
+                    android:layout_width="@dimen/_80sdp"
+                    android:layout_height="@dimen/_80sdp"
+                    android:src="@mipmap/conversation_blue"
+                    android:background="@color/colorWhite"
+                    android:layout_gravity="center"/>
+
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/group"
+                android:textSize="@dimen/_15sdp"
+                android:textColor="@color/colorWhite"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/_5sdp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_classroom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/layout_group"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardview_classroom"
+                android:layout_width="@dimen/_100sdp"
+                android:layout_height="@dimen/_100sdp">
+
+                <ImageView
+                    android:layout_width="@dimen/_80sdp"
+                    android:layout_height="@dimen/_80sdp"
+                    android:src="@mipmap/classrom_blue"
+                    android:background="@color/colorWhite"
+                    android:layout_gravity="center"/>
+
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/classroom"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/_15sdp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="@dimen/_5sdp"/>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/iv_microphone"
+        android:layout_width="@dimen/_50sdp"
+        android:layout_height="@dimen/_50sdp"
+        android:src="@drawable/ic_microphone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="@dimen/_20sdp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
