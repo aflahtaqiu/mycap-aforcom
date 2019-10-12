@@ -43,6 +43,7 @@ public class DashboardActivity extends BaseActivity implements IDashboardView {
     ImageView ivMicrophone;
 
     private RandomStringGenerator stringGenerator;
+    private DashboardPresenter presenter;
 
     private final char CHAR_G = 'G';
     private final char CHAR_C = 'C';
@@ -56,6 +57,7 @@ public class DashboardActivity extends BaseActivity implements IDashboardView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
         ButterKnife.bind(this);
+        presenter = new DashboardPresenter(this);
 
         stringGenerator = new RandomStringGenerator.Builder()
                 .withinRange('0', 'Z')
@@ -73,30 +75,23 @@ public class DashboardActivity extends BaseActivity implements IDashboardView {
     }
 
     private void actionJoinBtnClicked (String code) {
-        if (code.charAt(ZERO) == CHAR_G)
-            moveChatRoom(code);
-        else if (code.charAt(ZERO) == CHAR_C)
-            moveConferenceListener(code);
-        else
+        if (code.charAt(ZERO) == CHAR_G || code.charAt(ZERO) == CHAR_C) {
+            presenter.joinGroup(code);
+        } else {
             showMessage(WRONG_CODE_MESSAGE);
+        }
     }
 
     @OnClick(R.id.cardview_group_chat)
     public void onCardViewGroupChatClicked () {
         String code = CHAR_G + stringGenerator.generate(CODE_LENGTH);
-
-        // TODO: logic check to server is code available
-
-        moveChatRoom(code);
+        presenter.createGroup(code);
     }
 
     @OnClick(R.id.cardview_classroom)
     public void onCardViewClassRoomClicked () {
-            String code = CHAR_C + stringGenerator.generate(CODE_LENGTH);
-
-        // TODO: logic check to server is code available
-
-        moveConferenceSpeaker(code);
+        String code = CHAR_C + stringGenerator.generate(CODE_LENGTH);
+        presenter.createGroup(code);
     }
 
     @OnClick(R.id.iv_microphone)

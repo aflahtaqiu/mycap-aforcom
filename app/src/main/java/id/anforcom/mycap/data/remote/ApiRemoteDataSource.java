@@ -1,5 +1,7 @@
 package id.anforcom.mycap.data.remote;
 
+import android.util.Log;
+
 import com.google.gson.JsonObject;
 
 import java.util.List;
@@ -87,8 +89,10 @@ public class ApiRemoteDataSource extends BaseRemoteDataSource implements ApiData
             public void onResponse(Call<Group> call, Response<Group> response) {
                 if (response.code() == RESPONSE_CREATED)
                     callback.onSuccess(response.body());
-                else
+                else {
                     callback.onError(ERROR_CREATE_GROUP);
+                }
+
             }
 
             @Override
@@ -105,9 +109,11 @@ public class ApiRemoteDataSource extends BaseRemoteDataSource implements ApiData
         jsonObject.addProperty("group_code", groupCode);
 
         Call<Group> call = apiEndpoint.joinGroup(jsonObject);
+        Log.e("request", call.request().toString());
         call.enqueue(new Callback<Group>() {
             @Override
             public void onResponse(Call<Group> call, Response<Group> response) {
+                Log.e("response", response.toString());
                 if (response.code() == RESPONSE_CREATED)
                     callback.onSuccess(response.body());
                 else

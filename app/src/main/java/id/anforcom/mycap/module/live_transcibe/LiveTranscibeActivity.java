@@ -33,6 +33,8 @@ public class LiveTranscibeActivity extends BaseActivity implements ILiveTranscib
     private SpeechRecognizer speechRecognizer;
     private Intent intentRecognition;
 
+    private static boolean IS_SPEECH_RECOGNIZING = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,7 +43,6 @@ public class LiveTranscibeActivity extends BaseActivity implements ILiveTranscib
 
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
         speechRecognizer.setRecognitionListener(new TranscibeRecognitionListener());
-
     }
 
     @Override
@@ -89,7 +90,8 @@ public class LiveTranscibeActivity extends BaseActivity implements ILiveTranscib
 
         @Override
         public void onBeginningOfSpeech() {
-
+            IS_SPEECH_RECOGNIZING = true;
+            btnStop.setBackground(getResources().getDrawable(R.drawable.ic_cancel));
         }
 
         @Override
@@ -104,7 +106,8 @@ public class LiveTranscibeActivity extends BaseActivity implements ILiveTranscib
 
         @Override
         public void onEndOfSpeech() {
-
+            IS_SPEECH_RECOGNIZING = false;
+            btnStop.setBackground(getResources().getDrawable(R.drawable.ic_microphone));
         }
 
         @Override
@@ -114,22 +117,28 @@ public class LiveTranscibeActivity extends BaseActivity implements ILiveTranscib
 
         @Override
         public void onResults(Bundle bundle) {
+            textView.append(".");
+        }
+
+        @Override
+        public void onPartialResults(Bundle bundle) {
             ArrayList<String> matches = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
             if (matches != null && matches.size() != 0) {
-                textView.append(matches.get(0) + ". ");
+                textView.setText(matches.get(0));
             }else{
                 Toast.makeText(LiveTranscibeActivity.this, "Tidak dapat mendengar kata-kata", Toast.LENGTH_LONG).show();
             }
         }
 
         @Override
-        public void onPartialResults(Bundle bundle) {
-
-        }
-
-        @Override
         public void onEvent(int i, Bundle bundle) {
 
         }
+    }
+
+    @OnClick(R.id.btn_stop_live_transcibe)
+    public void onStopClicked () {
+        if (!IS_SPEECH_RECOGNIZING)
+            promptSpeechInput();
     }
 }

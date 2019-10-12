@@ -8,4 +8,7 @@ package id.anforcom.mycap.module.main;
 
 
 public interface IMainActivityView {
+    void moveToDashboard();
+
+    void showEmptyFieldAlert(String message);
 }

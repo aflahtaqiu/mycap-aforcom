@@ -1,15 +1,11 @@
 package id.anforcom.mycap.module.main;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
+import android.text.TextUtils;
 import android.widget.Button;
-
-import androidx.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.iid.InstanceIdResult;
+import android.widget.EditText;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,7 +26,12 @@ public class MainActivity extends BaseActivity implements IMainActivityView{
     @BindView(R.id.btn_language_eng)
     Button btnEnglish;
 
+    @BindView(R.id.et_name_user)
+    EditText etNamaUser;
+
     private MainActivityPresenter presenter;
+
+    private static String EMPTY_NAME_FIELD = "Harus mengisi nama";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,23 +45,11 @@ public class MainActivity extends BaseActivity implements IMainActivityView{
     @OnClick(R.id.btn_start)
     public void onStartBtnClicked () {
 
-        FirebaseInstanceId.getInstance()
-                .getInstanceId()
-                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                        InstanceIdResult result = task.getResult();
-
-                        if (!task.isSuccessful()) {
-                            return;
-                        }
-
-                        if (result != null) {
-                            Log.e("fcm token", result.getToken());
-                            CommunicationUtils.changeActivity(MainActivity.this, DashboardActivity.class, false);
-                        }
-                    }
-                });
+        if (!TextUtils.isEmpty(etNamaUser.getText().toString())) {
+            presenter.saveDataToSharedPreference(etNamaUser.getText().toString());
+        } else {
+            showEmptyFieldAlert(EMPTY_NAME_FIELD);
+        }
     }
 
     @OnClick(R.id.btn_language_id)
@@ -71,5 +60,30 @@ public class MainActivity extends BaseActivity implements IMainActivityView{
     @OnClick(R.id.btn_language_eng)
     public void onEnglishBtnClicked () {
         presenter.setEnglish();
+    }
+
+    @Override
+    public void moveToDashboard() {
+        CommunicationUtils.changeActivity(MainActivity.this, DashboardActivity.class, false);
+    }
+
+    @Override
+    public void showEmptyFieldAlert(String message) {
+        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                .setTitle(R.string.warning)
+                .setMessage(message)
+                .setPositiveButton(R.string.ok, new MainActivity.OnOkClickListener())
+                .setCancelable(false)
+                .create();
+
+        alertDialog.setCanceledOnTouchOutside(true);
+        alertDialog.show();
+    }
+
+    private class OnOkClickListener implements DialogInterface.OnClickListener {
+        @Override
+        public void onClick(DialogInterface dialogInterface, int i) {
+            dialogInterface.dismiss();
+        }
     }
 }

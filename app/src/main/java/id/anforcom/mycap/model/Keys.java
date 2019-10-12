@@ -11,8 +11,10 @@ public enum Keys {
 
     BUNDLE("bundle"),
     CODE("code"),
-    ID("bahasa_indonesia"),
     ENGLISH("english"),
+    FCM_TOKEN("fcm_token"),
+    ID("bahasa_indonesia"),
+    NAMA_USER("nama_user"),
     PILIHAN_BAHASA("pilihan_bahasa");
 
     private String key;
