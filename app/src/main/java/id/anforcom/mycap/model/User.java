@@ -1,5 +1,7 @@
 package id.anforcom.mycap.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import lombok.Data;
 
 /**
@@ -11,5 +13,10 @@ import lombok.Data;
 
 @Data
 public class User {
+
+    @SerializedName("name")
     private String name;
+
+    @SerializedName("_id")
+    private String id;
 }

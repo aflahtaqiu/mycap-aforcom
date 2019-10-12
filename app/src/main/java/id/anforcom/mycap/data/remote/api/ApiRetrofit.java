@@ -14,7 +14,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiRetrofit {
 
-    public static final String BASE_URL = "https://haFGCAWIF/";
+    public static final String BASE_URL = "https://mycap.herokuapp.com/api/v1/";
     private static Retrofit retrofit;
 
     public static Retrofit getInstance() {

@@ -2,6 +2,7 @@ package id.anforcom.mycap.data.remote;
 
 import com.google.gson.JsonObject;
 
+import id.anforcom.mycap.base.BaseRemoteDataSource;
 import id.anforcom.mycap.data.remote.api.ApiFirebaseRetrofit;
 import id.anforcom.mycap.data.remote.api.IApiEndpoint;
 import id.anforcom.mycap.data.source.FirebaseSource;
@@ -13,9 +14,7 @@ import id.anforcom.mycap.data.source.FirebaseSource;
  */
 
 
-public class FirebaseRemoteDataSource implements FirebaseSource {
-
-    private IApiEndpoint apiEndpoint = ApiFirebaseRetrofit.getInstance().create(IApiEndpoint.class);
+public class FirebaseRemoteDataSource extends BaseRemoteDataSource implements FirebaseSource {
 
     private static FirebaseRemoteDataSource firebaseRemoteDataSource;
 
