@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,6 +14,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,6 +25,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -47,13 +49,18 @@ public class ChatRoomActivity extends BaseActivity implements IChatRoomView {
     @BindView(R.id.btn_microphone)
     ImageView ivMicrophone;
 
+    @BindView(R.id.reyclerview_message_list)
+    RecyclerView recyclerViewMessage;
+
     private ChatRoomPresenter presenter;
 
     private SpeechRecognizer speechRecognizer;
     private Intent intentRecognition;
     private DatabaseReference databaseReference;
+    private ChatAdapter adapter;
 
     private String chatCode;
+    private List<Chat> chats = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +74,11 @@ public class ChatRoomActivity extends BaseActivity implements IChatRoomView {
         speechRecognizer.setRecognitionListener(new ChatRoomActivity.TranscibeRecognitionListener());
 
         getIntentData();
+
+        adapter = new ChatAdapter(chats, this);
+
+        recyclerViewMessage.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewMessage.setAdapter(adapter);
     }
 
     @Override
@@ -74,20 +86,21 @@ public class ChatRoomActivity extends BaseActivity implements IChatRoomView {
         super.onStart();
 
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-        databaseReference = FirebaseDatabase.getInstance().getReference("Groups").child(chatCode);
+        databaseReference = FirebaseDatabase.getInstance().getReference("groups").child(chatCode).child("chats");
 
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                chats.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Chat chat = snapshot.getValue(Chat.class);
-                    Log.e("data snapshot", chat.toString());
+                    chats.add(chat);
                 }
+                adapter.notifyDataSetChanged();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         });
     }
@@ -197,8 +210,6 @@ public class ChatRoomActivity extends BaseActivity implements IChatRoomView {
                 hashMap.put("message", matches.get(0));
 
                 databaseReference.child("groups").child(chatCode).child("chats").push().setValue(hashMap);
-
-                Log.e("lele", "djakd");
             }else{
                 Toast.makeText(ChatRoomActivity.this, "Tidak dapat mendengar kata-kata", Toast.LENGTH_LONG).show();
             }
