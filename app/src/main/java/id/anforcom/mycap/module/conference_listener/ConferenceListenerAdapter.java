@@ -1,4 +1,4 @@
-package id.anforcom.mycap.module.chatroom;
+package id.anforcom.mycap.module.conference_listener;
 
 import android.content.Context;
 
@@ -24,28 +24,27 @@ import id.anforcom.mycap.model.Chat;
  */
 
 
-public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatAdapterViewHolder> {
+public class ConferenceListenerAdapter extends RecyclerView.Adapter<ConferenceListenerAdapter.COnferenceListenerViewHolder> {
     private final Context context;
     private List<Chat> items;
 
-    ChatAdapter(List<Chat> items, Context context) {
+    public ConferenceListenerAdapter(List<Chat> items, Context context) {
         this.items = items;
         this.context = context;
     }
 
     @Override
-    public ChatAdapterViewHolder onCreateViewHolder(ViewGroup parent,
-                                                    int viewType) {
+    public COnferenceListenerViewHolder onCreateViewHolder(ViewGroup parent,
+                                                           int viewType) {
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_messages_recieve, parent, false);
-        return new ChatAdapterViewHolder(v);
+        return new COnferenceListenerViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(ChatAdapterViewHolder holder, int position) {
+    public void onBindViewHolder(COnferenceListenerViewHolder holder, int position) {
         Chat item = items.get(position);
-
-        holder.tvNamaUser.setText(item.getUsername());
+        holder.tvNamaUser.setVisibility(View.GONE);
         holder.tvMessageBody.setText(item.getMessage());
     }
 
@@ -57,7 +56,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatAdapterVie
         return items.size();
     }
 
-    class ChatAdapterViewHolder extends RecyclerView.ViewHolder {
+    public class COnferenceListenerViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.text_message_name)
         TextView tvNamaUser;
@@ -65,7 +64,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatAdapterVie
         @BindView(R.id.text_message_body)
         TextView tvMessageBody;
 
-        ChatAdapterViewHolder(@NonNull View itemView) {
+        public COnferenceListenerViewHolder(@NonNull View itemView) {
 
             super(itemView);
             ButterKnife.bind(this, itemView);

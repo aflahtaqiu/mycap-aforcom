@@ -8,9 +8,9 @@ package id.anforcom.mycap.module.dashboard;
 
 
 public interface IDashboardView {
-    void moveConferenceListener(String code);
-    void moveConferenceSpeaker(String code);
-    void moveChatRoom(String code);
+    void moveConferenceListener(String code, String idGroup);
+    void moveConferenceSpeaker(String code, String idGroup);
+    void moveChatRoom(String code, String idGroup);
     void moveLiveTranscibe();
 
     void showMessage(String message);

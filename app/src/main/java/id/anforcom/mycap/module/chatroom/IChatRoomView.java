@@ -1,5 +1,7 @@
 package id.anforcom.mycap.module.chatroom;
 
+import id.anforcom.mycap.base.IBaseView;
+
 /**
  * Created by aflah on 08/10/19
  * Email  : aflahtaqiusondha@gmail.com
@@ -7,11 +9,7 @@ package id.anforcom.mycap.module.chatroom;
  */
 
 
-public interface IChatRoomView {
-
-    void showMessage(String message);
-    void showProgress(String message);
-    void hideProgress ();
+public interface IChatRoomView extends IBaseView {
 
     void moveToDashboard();
 }

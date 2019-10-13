@@ -27,7 +27,7 @@ class DashboardPresenter {
     private final int ZERO = 0;
     private final String LOADING_MESSAGE = "Loading...";
 
-    public DashboardPresenter(IDashboardView view) {
+    DashboardPresenter(IDashboardView view) {
         this.view = view;
         this.repository = Injector.provideApiRepository();
     }
@@ -49,9 +49,9 @@ class DashboardPresenter {
                 view.hideProgress();
 
                 if (groupCode.charAt(ZERO) == CHAR_C)
-                    view.moveConferenceSpeaker(group.getGroupCode());
+                    view.moveConferenceSpeaker(group.getGroupCode(), group.getId());
                 else
-                    view.moveChatRoom(group.getGroupCode());
+                    view.moveChatRoom(group.getGroupCode(), group.getId());
             }
 
             @Override
@@ -69,12 +69,19 @@ class DashboardPresenter {
         repository.joinGroup(userName, groupCode, new ApiDataSource.GroupCallback() {
             @Override
             public void onSuccess(Group group) {
+
+                for (User user : group.getUsers()) {
+                    if (TextUtils.equals(userName, user.getName())) {
+                        SharedPrefUtils.setStringSharedPref(Keys.ID_USER.getKey(), user.getId());
+                    }
+                }
+
                 view.hideProgress();
 
                 if (groupCode.charAt(ZERO) == CHAR_C)
-                    view.moveConferenceSpeaker(group.getGroupCode());
+                    view.moveConferenceListener(group.getGroupCode(), group.getId());
                 else
-                    view.moveChatRoom(group.getGroupCode());
+                    view.moveChatRoom(group.getGroupCode(), group.getId());
             }
 
             @Override

@@ -53,13 +53,14 @@ public class ChatRoomActivity extends BaseActivity implements IChatRoomView {
     RecyclerView recyclerViewMessage;
 
     private ChatRoomPresenter presenter;
+    private ChatAdapter adapter;
 
     private SpeechRecognizer speechRecognizer;
     private Intent intentRecognition;
     private DatabaseReference databaseReference;
-    private ChatAdapter adapter;
 
     private String chatCode;
+    private String idGroup;
     private List<Chat> chats = new ArrayList<>();
 
     @Override
@@ -107,6 +108,7 @@ public class ChatRoomActivity extends BaseActivity implements IChatRoomView {
 
     private void getIntentData () {
         chatCode = getIntent().getBundleExtra(Keys.BUNDLE.getKey()).getString(Keys.CODE.getKey());
+        idGroup = getIntent().getBundleExtra(Keys.BUNDLE.getKey()).getString(Keys.ID_GROUP.getKey());
 
         tvCode.setText(chatCode);
     }
@@ -124,12 +126,22 @@ public class ChatRoomActivity extends BaseActivity implements IChatRoomView {
 
     @OnClick(R.id.btn_stop_chatroom)
     public void onStopBtnClicked () {
-
+        presenter.leftGroup(idGroup);
     }
 
     @OnClick(R.id.btn_microphone)
     public void onMicrophoneBtnClicked () {
         promptSpeechInput();
+    }
+
+    @Override
+    public void showLoading(String message) {
+        onShowLoading(message);
+    }
+
+    @Override
+    public void hideLoading() {
+        onHideLoading();
     }
 
     @Override
@@ -143,16 +155,6 @@ public class ChatRoomActivity extends BaseActivity implements IChatRoomView {
 
         alertDialog.setCanceledOnTouchOutside(true);
         alertDialog.show();
-    }
-
-    @Override
-    public void showProgress(String message) {
-        onShowLoading(message);
-    }
-
-    @Override
-    public void hideProgress() {
-        onHideLoading();
     }
 
     @Override

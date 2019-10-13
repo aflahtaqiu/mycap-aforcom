@@ -1,5 +1,7 @@
 package id.anforcom.mycap.module.conference_listener;
 
+import id.anforcom.mycap.base.IBaseView;
+
 /**
  * Created by aflah on 10/10/19
  * Email  : aflahtaqiusondha@gmail.com
@@ -7,5 +9,9 @@ package id.anforcom.mycap.module.conference_listener;
  */
 
 
-public interface IConferenceListenerView {
+public interface IConferenceListenerView extends IBaseView {
+
+    void moveToDashboard();
+
+    void setSpeakerName (String speakerName);
 }

@@ -1,22 +1,49 @@
 package id.anforcom.mycap.module.conference_speaker;
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.speech.RecognitionListener;
+import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import javax.security.auth.login.LoginException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import id.anforcom.mycap.R;
+import id.anforcom.mycap.base.BaseActivity;
+import id.anforcom.mycap.model.Chat;
 import id.anforcom.mycap.model.Keys;
 import id.anforcom.mycap.model.User;
+import id.anforcom.mycap.module.chatroom.ChatRoomActivity;
+import id.anforcom.mycap.module.dashboard.DashboardActivity;
+import id.anforcom.mycap.utils.CommunicationUtils;
+import id.anforcom.mycap.utils.SharedPrefUtils;
 
-public class ConferenceSpeakerActivity extends AppCompatActivity implements IConferenceSpeakerView {
+public class ConferenceSpeakerActivity extends BaseActivity implements IConferenceSpeakerView {
 
     @BindView(R.id.tv_conference_code)
     TextView tvCode;
@@ -24,10 +51,26 @@ public class ConferenceSpeakerActivity extends AppCompatActivity implements ICon
     @BindView(R.id.btn_stop_conference_speaker)
     ImageView ivStopChatRoom;
 
+    @BindView(R.id.iv_refresh)
+    ImageView ivRefresh;
+
+    @BindView(R.id.rv_conference_listeners)
+    RecyclerView recyclerView;
+
     private ConferenceSpeakerPresenter presenter;
+    private ConferenceSpeakerAdapter adapter;
 
     private List<User> userList = new ArrayList<>();
+
+    private SpeechRecognizer speechRecognizer;
+    private Intent intentRecognition;
+
     private String conferenceCode;
+    private String idGroup;
+
+    private DatabaseReference databaseReference;
+
+    private static final int ITEM_SPAN_COUNT = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,18 +79,171 @@ public class ConferenceSpeakerActivity extends AppCompatActivity implements ICon
 
         ButterKnife.bind(this);
         presenter = new ConferenceSpeakerPresenter(this);
+        adapter = new ConferenceSpeakerAdapter(this.userList, this);
+
+        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
+        speechRecognizer.setRecognitionListener(new ConferenceSpeakerActivity.TranscibeRecognitionListener());
 
         getIntentData();
     }
 
+    private void promptSpeechInput() {
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO},1);
+        intentRecognition = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intentRecognition.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intentRecognition.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,
+                this.getPackageName());
+        intentRecognition.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS,true);
+        speechRecognizer.startListening(intentRecognition);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new GridLayoutManager(this, ITEM_SPAN_COUNT));
+
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        databaseReference = FirebaseDatabase.getInstance().getReference("groups").child(conferenceCode).child("chats");
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.e("firebase,", dataSnapshot.toString());
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Chat chat = snapshot.getValue(Chat.class);
+                    Log.e("chat", chat.toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+    }
+
     private void getIntentData () {
         conferenceCode = getIntent().getBundleExtra(Keys.BUNDLE.getKey()).getString(Keys.CODE.getKey());
+        idGroup = getIntent().getBundleExtra(Keys.BUNDLE.getKey()).getString(Keys.ID_GROUP.getKey());
 
         tvCode.setText(conferenceCode);
     }
 
+    @OnClick(R.id.btn_microphone)
+    public void onMicrophoneBtnClicked () {
+        promptSpeechInput();
+    }
+
     @OnClick(R.id.btn_stop_conference_speaker)
     public void onBtnStopClicked () {
+        presenter.leftGroup(idGroup);
+    }
 
+    @OnClick(R.id.iv_refresh)
+    public void onRefreshClicked () {
+        presenter.updateListeners(idGroup);
+    }
+
+    @Override
+    public void setListenerData(List<User> users) {
+        this.userList.clear();
+        this.userList.addAll(users);
+
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void moveToDashboard() {
+        CommunicationUtils.changeActivity(ConferenceSpeakerActivity.this, DashboardActivity.class);
+    }
+
+    @Override
+    public void showLoading(String message) {
+        onShowLoading(message);
+    }
+
+    @Override
+    public void hideLoading() {
+        onHideLoading();
+    }
+
+    @Override
+    public void showMessage(String message) {
+        AlertDialog alertDialog = new AlertDialog.Builder(this)
+                .setTitle(R.string.warning)
+                .setMessage(message)
+                .setPositiveButton(R.string.ok, new ConferenceSpeakerActivity.OnOkClickListener())
+                .setCancelable(false)
+                .create();
+
+        alertDialog.setCanceledOnTouchOutside(true);
+        alertDialog.show();
+    }
+
+    private static class OnOkClickListener implements DialogInterface.OnClickListener {
+        @Override
+        public void onClick(DialogInterface dialogInterface, int i) {
+            dialogInterface.dismiss();
+        }
+    }
+
+    private class TranscibeRecognitionListener implements RecognitionListener {
+        @Override
+        public void onReadyForSpeech(Bundle bundle) {
+
+        }
+
+        @Override
+        public void onBeginningOfSpeech() {
+
+        }
+
+        @Override
+        public void onRmsChanged(float v) {
+
+        }
+
+        @Override
+        public void onBufferReceived(byte[] bytes) {
+
+        }
+
+        @Override
+        public void onEndOfSpeech() {
+
+        }
+
+        @Override
+        public void onError(int i) {
+
+        }
+
+        @Override
+        public void onResults(Bundle bundle) {
+            String userName = SharedPrefUtils.getStringSharedPref(Keys.NAMA_USER.getKey(), "");
+            ArrayList<String> matches = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+            if (matches != null && matches.size() != 0) {
+
+                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+                HashMap<String, Object> hashMap = new HashMap<>();
+                hashMap.put("username", userName);
+                hashMap.put("message", matches.get(0));
+
+                databaseReference.child("groups").child(conferenceCode).child("chats").push().setValue(hashMap);
+                Log.e("speech", "on results");
+            }else{
+                Toast.makeText(ConferenceSpeakerActivity.this, "Tidak dapat mendengar kata-kata", Toast.LENGTH_LONG).show();
+            }
+        }
+
+        @Override
+        public void onPartialResults(Bundle bundle) {
+        }
+
+        @Override
+        public void onEvent(int i, Bundle bundle) {
+
+        }
     }
 }

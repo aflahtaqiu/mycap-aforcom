@@ -14,6 +14,7 @@ public enum Keys {
     ENGLISH("english"),
     FCM_TOKEN("fcm_token"),
     ID("bahasa_indonesia"),
+    ID_GROUP("id_group"),
     ID_USER("id_user"),
     NAMA_USER("nama_user"),
     PILIHAN_BAHASA("pilihan_bahasa");

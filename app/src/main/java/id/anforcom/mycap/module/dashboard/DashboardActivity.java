@@ -100,25 +100,28 @@ public class DashboardActivity extends BaseActivity implements IDashboardView {
     }
 
     @Override
-    public void moveConferenceListener(String code) {
+    public void moveConferenceListener(String code, String idGroup) {
         Bundle bundle = new Bundle();
         bundle.putString(Keys.CODE.getKey(), code);
+        bundle.putString(Keys.ID_GROUP.getKey(), idGroup);
         CommunicationUtils.changeActivity(this, ConferenceListenerActivity.class, bundle,
                 Keys.BUNDLE.getKey(), false);
     }
 
     @Override
-    public void moveConferenceSpeaker(String code) {
+    public void moveConferenceSpeaker(String code, String idGroup) {
         Bundle bundle = new Bundle();
         bundle.putString(Keys.CODE.getKey(), code);
+        bundle.putString(Keys.ID_GROUP.getKey(), idGroup);
         CommunicationUtils.changeActivity(this, ConferenceSpeakerActivity.class, bundle,
                 Keys.BUNDLE.getKey(), false);
     }
 
     @Override
-    public void moveChatRoom(String code) {
+    public void moveChatRoom(String code, String idGroup) {
         Bundle bundle = new Bundle();
         bundle.putString(Keys.CODE.getKey(), code);
+        bundle.putString(Keys.ID_GROUP.getKey(), idGroup);
         CommunicationUtils.changeActivity(this, ChatRoomActivity.class, bundle,
                 Keys.BUNDLE.getKey(), false);
     }

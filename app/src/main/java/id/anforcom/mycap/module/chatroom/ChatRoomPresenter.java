@@ -16,32 +16,34 @@ import id.anforcom.mycap.utils.SharedPrefUtils;
  */
 
 
-public class ChatRoomPresenter {
+class ChatRoomPresenter {
 
     private IChatRoomView view;
     private ApiRepository repository;
 
-    private final String LOADING_MESSAGE = "Loading...";
+    private static final String LOADING_MESSAGE = "Loading...";
 
-    public ChatRoomPresenter(IChatRoomView view) {
+    ChatRoomPresenter(IChatRoomView view) {
         this.view = view;
         this.repository = Injector.provideApiRepository();
     }
 
     void leftGroup (String groupId) {
-        view.showMessage(LOADING_MESSAGE);
+        view.showLoading(LOADING_MESSAGE);
 
         String userId = SharedPrefUtils.getStringSharedPref(Keys.ID_USER.getKey(), "");
 
         repository.leftGroup(userId, groupId, new ApiDataSource.GroupCallback() {
             @Override
             public void onSuccess(Group group) {
-
+                view.hideLoading();
+                view.moveToDashboard();
             }
 
             @Override
             public void onError(String errorMessage) {
-
+                view.hideLoading();
+                view.showMessage(errorMessage);
             }
         });
     }
