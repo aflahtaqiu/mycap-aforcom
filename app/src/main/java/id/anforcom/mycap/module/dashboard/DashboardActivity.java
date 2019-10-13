@@ -142,6 +142,16 @@ public class DashboardActivity extends BaseActivity implements IDashboardView {
         alertDialog.show();
     }
 
+    @Override
+    public void showProgress(String message) {
+        onShowLoading(message);
+    }
+
+    @Override
+    public void hideProgress() {
+        onHideLoading();
+    }
+
     private static class OnOkClickListener implements DialogInterface.OnClickListener {
         @Override
         public void onClick(DialogInterface dialogInterface, int i) {

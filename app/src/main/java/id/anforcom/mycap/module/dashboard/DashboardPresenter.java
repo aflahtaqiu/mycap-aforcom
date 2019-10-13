@@ -1,10 +1,13 @@
 package id.anforcom.mycap.module.dashboard;
 
+import android.text.TextUtils;
+
 import id.anforcom.mycap.data.repository.ApiRepository;
 import id.anforcom.mycap.data.source.ApiDataSource;
 import id.anforcom.mycap.di.Injector;
 import id.anforcom.mycap.model.Group;
 import id.anforcom.mycap.model.Keys;
+import id.anforcom.mycap.model.User;
 import id.anforcom.mycap.utils.SharedPrefUtils;
 
 /**
@@ -14,7 +17,7 @@ import id.anforcom.mycap.utils.SharedPrefUtils;
  */
 
 
-public class DashboardPresenter {
+class DashboardPresenter {
 
     private IDashboardView view;
     private ApiRepository repository;
@@ -22,6 +25,7 @@ public class DashboardPresenter {
     private final char CHAR_G = 'G';
     private final char CHAR_C = 'C';
     private final int ZERO = 0;
+    private final String LOADING_MESSAGE = "Loading...";
 
     public DashboardPresenter(IDashboardView view) {
         this.view = view;
@@ -29,11 +33,21 @@ public class DashboardPresenter {
     }
 
     void createGroup (String groupCode) {
+        view.showProgress(LOADING_MESSAGE);
         String userName = SharedPrefUtils.getStringSharedPref(Keys.NAMA_USER.getKey(), "");
 
         repository.createGroup(groupCode, userName, new ApiDataSource.GroupCallback() {
             @Override
             public void onSuccess(Group group) {
+
+                for (User user : group.getUsers()) {
+                    if (TextUtils.equals(userName, user.getName())) {
+                        SharedPrefUtils.setStringSharedPref(Keys.ID_USER.getKey(), user.getId());
+                    }
+                }
+
+                view.hideProgress();
+
                 if (groupCode.charAt(ZERO) == CHAR_C)
                     view.moveConferenceSpeaker(group.getGroupCode());
                 else
@@ -42,17 +56,21 @@ public class DashboardPresenter {
 
             @Override
             public void onError(String errorMessage) {
+                view.hideProgress();
                 view.showMessage(errorMessage);
             }
         });
     }
 
     void joinGroup (String groupCode) {
+        view.showProgress(LOADING_MESSAGE);
         String userName = SharedPrefUtils.getStringSharedPref(Keys.NAMA_USER.getKey(), "");
 
         repository.joinGroup(userName, groupCode, new ApiDataSource.GroupCallback() {
             @Override
             public void onSuccess(Group group) {
+                view.hideProgress();
+
                 if (groupCode.charAt(ZERO) == CHAR_C)
                     view.moveConferenceSpeaker(group.getGroupCode());
                 else
@@ -61,6 +79,7 @@ public class DashboardPresenter {
 
             @Override
             public void onError(String errorMessage) {
+                view.hideProgress();
                 view.showMessage(errorMessage);
             }
         });

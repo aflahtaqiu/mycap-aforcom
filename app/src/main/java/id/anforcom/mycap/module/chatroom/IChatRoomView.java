@@ -8,4 +8,10 @@ package id.anforcom.mycap.module.chatroom;
 
 
 public interface IChatRoomView {
+
+    void showMessage(String message);
+    void showProgress(String message);
+    void hideProgress ();
+
+    void moveToDashboard();
 }

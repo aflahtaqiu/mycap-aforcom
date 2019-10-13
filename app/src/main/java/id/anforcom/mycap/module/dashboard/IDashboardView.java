@@ -14,4 +14,6 @@ public interface IDashboardView {
     void moveLiveTranscibe();
 
     void showMessage(String message);
+    void showProgress(String message);
+    void hideProgress ();
 }
