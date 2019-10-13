@@ -26,6 +26,7 @@ class ConferenceSpeakerPresenter {
     private ApiRepository repository;
 
     private static final String LOADING_MESSAGE = "Loading...";
+    private static final String ERROR_TIMEOUT = "timeout";
 
     ConferenceSpeakerPresenter(IConferenceSpeakerView view) {
         this.view = view;
@@ -52,8 +53,12 @@ class ConferenceSpeakerPresenter {
 
             @Override
             public void onError(String errorMessage) {
-                view.hideLoading();
-                view.showMessage(errorMessage);
+                if (TextUtils.equals(errorMessage, ERROR_TIMEOUT))
+                    updateListeners(idGroup);
+                else {
+                    view.hideLoading();
+                    view.showMessage(errorMessage);
+                }
             }
         });
     }
@@ -72,8 +77,12 @@ class ConferenceSpeakerPresenter {
 
             @Override
             public void onError(String errorMessage) {
-                view.hideLoading();
-                view.showMessage(errorMessage);
+                if (TextUtils.equals(errorMessage, ERROR_TIMEOUT))
+                    leftGroup(groupId);
+                else {
+                    view.hideLoading();
+                    view.showMessage(errorMessage);
+                }
             }
         });
     }

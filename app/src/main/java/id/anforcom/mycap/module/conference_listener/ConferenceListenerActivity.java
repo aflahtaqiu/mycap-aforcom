@@ -52,6 +52,9 @@ public class ConferenceListenerActivity extends BaseActivity implements IConfere
     private String conferenceCode;
     private String idGroup;
 
+    private static final String KEY_CHATS = "chats";
+    private static final String KEY_GROUPS = "groups";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,7 +82,7 @@ public class ConferenceListenerActivity extends BaseActivity implements IConfere
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-        databaseReference = FirebaseDatabase.getInstance().getReference("groups").child(conferenceCode).child("chats");
+        databaseReference = FirebaseDatabase.getInstance().getReference(KEY_GROUPS).child(conferenceCode).child(KEY_CHATS);
 
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override

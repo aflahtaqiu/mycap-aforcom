@@ -1,6 +1,7 @@
 package id.anforcom.mycap.module.chatroom;
 
 import android.telecom.Call;
+import android.text.TextUtils;
 
 import id.anforcom.mycap.data.repository.ApiRepository;
 import id.anforcom.mycap.data.source.ApiDataSource;
@@ -22,6 +23,7 @@ class ChatRoomPresenter {
     private ApiRepository repository;
 
     private static final String LOADING_MESSAGE = "Loading...";
+    private static final String ERROR_TIMEOUT = "timeout";
 
     ChatRoomPresenter(IChatRoomView view) {
         this.view = view;
@@ -42,8 +44,12 @@ class ChatRoomPresenter {
 
             @Override
             public void onError(String errorMessage) {
-                view.hideLoading();
-                view.showMessage(errorMessage);
+                if (TextUtils.equals(errorMessage, ERROR_TIMEOUT))
+                    leftGroup(groupId);
+                else {
+                    view.hideLoading();
+                    view.showMessage(errorMessage);
+                }
             }
         });
     }

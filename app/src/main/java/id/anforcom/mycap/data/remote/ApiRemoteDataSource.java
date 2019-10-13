@@ -1,7 +1,5 @@
 package id.anforcom.mycap.data.remote;
 
-import android.util.Log;
-
 import com.google.gson.JsonObject;
 
 import java.util.List;
@@ -26,12 +24,20 @@ public class ApiRemoteDataSource extends BaseRemoteDataSource implements ApiData
 
     private static int RESPONSE_OK = 200;
     private static int RESPONSE_CREATED = 201;
+    private static int RESPONSE_NOT_FOUND = 404;
 
     private static String ERROR_GET_ALL_GROUP = "Maaf tidak ada data group";
     private static String ERROR_GET_GROUP_BY_ID = "Maaf gagal mendapatkan group dengan id " ;
     private static String ERROR_CREATE_GROUP = "Maaf gagal membuat group";
     private static String ERROR_JOIN_GROUP = "Maaf terjadi kesalahan dalam join group.";
+    private static String ERROR_NOT_FOUND_CODE = "Code Anda salah. Pastikan kembali code yang Anda masukkan";
     private static String ERROR_LEFT_GROUP = "Maaf terjadi kesalahan dalam left group";
+
+    private static String KEY_ADMIN = "admin";
+    private static String KEY_GROUP_CODE = "group_code";
+    private static String KEY_GROUP_ID = "group_id";
+    private static String KEY_NAME = "name";
+    private static String KEY_USER_ID = "user_id";
 
     public static ApiRemoteDataSource getInstance() {
         if (remoteDataSource == null) {
@@ -80,8 +86,8 @@ public class ApiRemoteDataSource extends BaseRemoteDataSource implements ApiData
     public void createGroup(String groupCode, String adminName, GroupCallback callback) {
 
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("group_code", groupCode);
-        jsonObject.addProperty("admin", adminName);
+        jsonObject.addProperty(KEY_GROUP_CODE, groupCode);
+        jsonObject.addProperty(KEY_ADMIN, adminName);
 
         Call<Group> call = apiEndpoint.createGroup(jsonObject);
         call.enqueue(new Callback<Group>() {
@@ -105,17 +111,17 @@ public class ApiRemoteDataSource extends BaseRemoteDataSource implements ApiData
     @Override
     public void joinGroup(String userName, String groupCode, GroupCallback callback) {
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("name", userName);
-        jsonObject.addProperty("group_code", groupCode);
+        jsonObject.addProperty(KEY_NAME, userName);
+        jsonObject.addProperty(KEY_GROUP_CODE, groupCode);
 
         Call<Group> call = apiEndpoint.joinGroup(jsonObject);
-        Log.e("request", call.request().toString());
         call.enqueue(new Callback<Group>() {
             @Override
             public void onResponse(Call<Group> call, Response<Group> response) {
-                Log.e("response", response.toString());
                 if (response.code() == RESPONSE_CREATED)
                     callback.onSuccess(response.body());
+                else if (response.code() == RESPONSE_NOT_FOUND)
+                    callback.onError(ERROR_NOT_FOUND_CODE);
                 else
                     callback.onError(ERROR_JOIN_GROUP);
             }
@@ -130,8 +136,8 @@ public class ApiRemoteDataSource extends BaseRemoteDataSource implements ApiData
     @Override
     public void leftGroup(String userId, String groupId, GroupCallback callback) {
         JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("user_id", userId);
-        jsonObject.addProperty("group_id", groupId);
+        jsonObject.addProperty(KEY_USER_ID, userId);
+        jsonObject.addProperty(KEY_GROUP_ID, groupId);
 
         Call<Group> call = apiEndpoint.leftGroup(jsonObject);
         call.enqueue(new Callback<Group>() {

@@ -22,10 +22,10 @@ class DashboardPresenter {
     private IDashboardView view;
     private ApiRepository repository;
 
-    private final char CHAR_G = 'G';
     private final char CHAR_C = 'C';
     private final int ZERO = 0;
     private final String LOADING_MESSAGE = "Loading...";
+    private static final String ERROR_TIMEOUT = "timeout";
 
     DashboardPresenter(IDashboardView view) {
         this.view = view;
@@ -56,8 +56,12 @@ class DashboardPresenter {
 
             @Override
             public void onError(String errorMessage) {
-                view.hideProgress();
-                view.showMessage(errorMessage);
+                if (TextUtils.equals(errorMessage, ERROR_TIMEOUT))
+                    createGroup(groupCode);
+                else  {
+                    view.hideProgress();
+                    view.showMessage(errorMessage);
+                }
             }
         });
     }
@@ -86,8 +90,12 @@ class DashboardPresenter {
 
             @Override
             public void onError(String errorMessage) {
-                view.hideProgress();
-                view.showMessage(errorMessage);
+                if (TextUtils.equals(errorMessage, ERROR_TIMEOUT))
+                    joinGroup(groupCode);
+                else {
+                    view.hideProgress();
+                    view.showMessage(errorMessage);
+                }
             }
         });
     }

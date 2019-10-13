@@ -66,5 +66,4 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginBottom="@dimen/_20sdp"/>
 
-
 </androidx.constraintlayout.widget.ConstraintLayout>

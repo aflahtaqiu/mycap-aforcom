@@ -35,6 +35,7 @@
             android:layout_height="wrap_content"
             android:background="@color/colorMyCap"
             android:text="@string/join"
+            android:fontFamily="@font/sf_pro_text_medium"
             android:textColor="@color/colorWhite"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"

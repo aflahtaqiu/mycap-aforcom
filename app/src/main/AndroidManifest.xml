@@ -10,7 +10,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
         <activity android:name=".module.chatroom.ChatRoomActivity"></activity>
@@ -18,7 +18,8 @@
         <activity android:name=".module.conference_speaker.ConferenceSpeakerActivity" />
         <activity
             android:name=".module.live_transcibe.LiveTranscibeActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".module.dashboard.DashboardActivity"/>
         <activity android:name=".module.dashboard.DashboardActivity" />
         <activity android:name=".module.splash_screen.SplashScreenActivity">
             <intent-filter>

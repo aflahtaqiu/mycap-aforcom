@@ -7,11 +7,11 @@ package id.anforcom.mycap.module.splash_screen;
  */
 
 
-public class SplashScreenPresenter {
+class SplashScreenPresenter {
 
     private ISplashScreen view;
 
-    public SplashScreenPresenter(ISplashScreen view) {
+    SplashScreenPresenter(ISplashScreen view) {
         this.view = view;
     }
 

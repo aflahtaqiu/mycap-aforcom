@@ -28,7 +28,7 @@ public class ConferenceListenerAdapter extends RecyclerView.Adapter<ConferenceLi
     private final Context context;
     private List<Chat> items;
 
-    public ConferenceListenerAdapter(List<Chat> items, Context context) {
+    ConferenceListenerAdapter(List<Chat> items, Context context) {
         this.items = items;
         this.context = context;
     }
@@ -56,7 +56,7 @@ public class ConferenceListenerAdapter extends RecyclerView.Adapter<ConferenceLi
         return items.size();
     }
 
-    public class COnferenceListenerViewHolder extends RecyclerView.ViewHolder {
+    class COnferenceListenerViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.text_message_name)
         TextView tvNamaUser;

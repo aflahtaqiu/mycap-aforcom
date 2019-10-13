@@ -1,5 +1,7 @@
 package id.anforcom.mycap.module.conference_listener;
 
+import android.text.TextUtils;
+
 import id.anforcom.mycap.data.repository.ApiRepository;
 import id.anforcom.mycap.data.source.ApiDataSource;
 import id.anforcom.mycap.di.Injector;
@@ -21,6 +23,7 @@ class ConferenceListenerPresenter {
 
     private static final String LOADING_MESSAGE = "Loading...";
     private static final String PRE_SPEAKER_NAME = "Speaker : ";
+    private static final String ERROR_TIMEOUT = "timeout";
 
     ConferenceListenerPresenter(IConferenceListenerView view) {
         this.view = view;
@@ -39,7 +42,12 @@ class ConferenceListenerPresenter {
 
             @Override
             public void onError(String errorMessage) {
-                getSpeakerName(idGroup);
+                if (TextUtils.equals(errorMessage, ERROR_TIMEOUT))
+                    getSpeakerName(idGroup);
+                else {
+                    view.hideLoading();
+                    view.showMessage(errorMessage);
+                }
             }
         });
     }
@@ -58,8 +66,12 @@ class ConferenceListenerPresenter {
 
             @Override
             public void onError(String errorMessage) {
-                view.hideLoading();
-                view.showMessage(errorMessage);
+                if (TextUtils.equals(errorMessage, ERROR_TIMEOUT))
+                    leftGroup(idGroup);
+                else {
+                    view.hideLoading();
+                    view.showMessage(errorMessage);
+                }
             }
         });
     }

@@ -63,6 +63,11 @@ public class ChatRoomActivity extends BaseActivity implements IChatRoomView {
     private String idGroup;
     private List<Chat> chats = new ArrayList<>();
 
+    private static final String KEY_CHATS = "chats";
+    private static final String KEY_GROUPS = "groups";
+    private static final String KEY_MESSAGE = "message";
+    private static final String KEY_USERNAME = "username";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,7 +92,7 @@ public class ChatRoomActivity extends BaseActivity implements IChatRoomView {
         super.onStart();
 
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-        databaseReference = FirebaseDatabase.getInstance().getReference("groups").child(chatCode).child("chats");
+        databaseReference = FirebaseDatabase.getInstance().getReference(KEY_GROUPS).child(chatCode).child(KEY_CHATS);
 
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -208,10 +213,10 @@ public class ChatRoomActivity extends BaseActivity implements IChatRoomView {
 
                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
                 HashMap<String, Object> hashMap = new HashMap<>();
-                hashMap.put("username", userName);
-                hashMap.put("message", matches.get(0));
+                hashMap.put(KEY_USERNAME, userName);
+                hashMap.put(KEY_MESSAGE, matches.get(0));
 
-                databaseReference.child("groups").child(chatCode).child("chats").push().setValue(hashMap);
+                databaseReference.child(KEY_GROUPS).child(chatCode).child(KEY_CHATS).push().setValue(hashMap);
             }else{
                 Toast.makeText(ChatRoomActivity.this, "Tidak dapat mendengar kata-kata", Toast.LENGTH_LONG).show();
             }

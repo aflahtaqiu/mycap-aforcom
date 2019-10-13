@@ -8,37 +8,28 @@ import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import javax.security.auth.login.LoginException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import id.anforcom.mycap.R;
 import id.anforcom.mycap.base.BaseActivity;
-import id.anforcom.mycap.model.Chat;
 import id.anforcom.mycap.model.Keys;
 import id.anforcom.mycap.model.User;
-import id.anforcom.mycap.module.chatroom.ChatRoomActivity;
 import id.anforcom.mycap.module.dashboard.DashboardActivity;
 import id.anforcom.mycap.utils.CommunicationUtils;
 import id.anforcom.mycap.utils.SharedPrefUtils;
@@ -68,9 +59,11 @@ public class ConferenceSpeakerActivity extends BaseActivity implements IConferen
     private String conferenceCode;
     private String idGroup;
 
-    private DatabaseReference databaseReference;
-
     private static final int ITEM_SPAN_COUNT = 3;
+    private static final String KEY_CHATS = "chats";
+    private static final String KEY_GROUPS = "groups";
+    private static final String KEY_MESSAGE = "message";
+    private static final String KEY_USERNAME = "username";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,24 +96,6 @@ public class ConferenceSpeakerActivity extends BaseActivity implements IConferen
         super.onStart();
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new GridLayoutManager(this, ITEM_SPAN_COUNT));
-
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-        databaseReference = FirebaseDatabase.getInstance().getReference("groups").child(conferenceCode).child("chats");
-
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.e("firebase,", dataSnapshot.toString());
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Chat chat = snapshot.getValue(Chat.class);
-                    Log.e("chat", chat.toString());
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-            }
-        });
     }
 
     private void getIntentData () {
@@ -227,11 +202,10 @@ public class ConferenceSpeakerActivity extends BaseActivity implements IConferen
 
                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
                 HashMap<String, Object> hashMap = new HashMap<>();
-                hashMap.put("username", userName);
-                hashMap.put("message", matches.get(0));
+                hashMap.put(KEY_USERNAME, userName);
+                hashMap.put(KEY_MESSAGE, matches.get(0));
 
-                databaseReference.child("groups").child(conferenceCode).child("chats").push().setValue(hashMap);
-                Log.e("speech", "on results");
+                databaseReference.child(KEY_GROUPS).child(conferenceCode).child(KEY_CHATS).push().setValue(hashMap);
             }else{
                 Toast.makeText(ConferenceSpeakerActivity.this, "Tidak dapat mendengar kata-kata", Toast.LENGTH_LONG).show();
             }

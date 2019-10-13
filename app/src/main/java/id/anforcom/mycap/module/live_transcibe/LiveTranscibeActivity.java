@@ -20,7 +20,7 @@ import butterknife.OnClick;
 import id.anforcom.mycap.R;
 import id.anforcom.mycap.base.BaseActivity;
 
-public class LiveTranscibeActivity extends BaseActivity implements ILiveTranscibeActivityView {
+public class LiveTranscibeActivity extends BaseActivity {
 
     @BindView(R.id.btn_stop_live_transcibe)
     ImageView btnStop;
@@ -28,10 +28,7 @@ public class LiveTranscibeActivity extends BaseActivity implements ILiveTranscib
     @BindView(R.id.tv_live_transcibe)
     TextView textView;
 
-    private LiveTranscibeActivityPresenter presenter;
-
     private SpeechRecognizer speechRecognizer;
-    private Intent intentRecognition;
 
     private static boolean IS_SPEECH_RECOGNIZING = false;
 
@@ -51,21 +48,6 @@ public class LiveTranscibeActivity extends BaseActivity implements ILiveTranscib
         promptSpeechInput();
     }
 
-    @Override
-    public void showLoading(String message) {
-
-    }
-
-    @Override
-    public void hideLoading() {
-
-    }
-
-    @Override
-    public void showMessage(String message) {
-
-    }
-
     @OnClick(R.id.btn_stop_live_transcibe)
     public void onBtnStopClicked () {
         speechRecognizer.stopListening();
@@ -73,12 +55,14 @@ public class LiveTranscibeActivity extends BaseActivity implements ILiveTranscib
 
     private void promptSpeechInput() {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO},1);
-        intentRecognition = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+
+        Intent intentRecognition = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intentRecognition.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intentRecognition.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,
                 this.getPackageName());
         intentRecognition.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS,true);
+
         speechRecognizer.startListening(intentRecognition);
     }
 

@@ -13,7 +13,7 @@
         android:layout_marginStart="@dimen/_16sdp"
         android:layout_marginTop="@dimen/_4sdp"
         android:text="Nama Pengirim"
-        android:textSize="12sp"
+        android:textSize="@dimen/_12sdp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginLeft="@dimen/_16sdp" />
@@ -29,6 +29,7 @@
         android:padding="@dimen/_8sdp"
         android:text="hi man, how are you?"
         android:textColor="@color/colorBlack"
+        android:textSize="@dimen/_14sdp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/text_message_name"
         android:layout_marginLeft="@dimen/_16sdp" />

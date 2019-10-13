@@ -32,6 +32,7 @@ public class MainActivity extends BaseActivity implements IMainActivityView{
     private MainActivityPresenter presenter;
 
     private static String EMPTY_NAME_FIELD = "Harus mengisi nama";
+    private static String LOADING = "Loading ...";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +47,7 @@ public class MainActivity extends BaseActivity implements IMainActivityView{
     public void onStartBtnClicked () {
 
         if (!TextUtils.isEmpty(etNamaUser.getText().toString())) {
+            showLoading(LOADING);
             presenter.saveDataToSharedPreference(etNamaUser.getText().toString());
         } else {
             showEmptyFieldAlert(EMPTY_NAME_FIELD);
@@ -64,7 +66,7 @@ public class MainActivity extends BaseActivity implements IMainActivityView{
 
     @Override
     public void moveToDashboard() {
-        CommunicationUtils.changeActivity(MainActivity.this, DashboardActivity.class, false);
+        CommunicationUtils.changeActivity(MainActivity.this, DashboardActivity.class);
     }
 
     @Override
@@ -78,6 +80,21 @@ public class MainActivity extends BaseActivity implements IMainActivityView{
 
         alertDialog.setCanceledOnTouchOutside(true);
         alertDialog.show();
+    }
+
+    @Override
+    public void showLoading(String message) {
+        onShowLoading(message);
+    }
+
+    @Override
+    public void hideLoading() {
+        onHideLoading();
+    }
+
+    @Override
+    public void showMessage(String message) {
+
     }
 
     private class OnOkClickListener implements DialogInterface.OnClickListener {
