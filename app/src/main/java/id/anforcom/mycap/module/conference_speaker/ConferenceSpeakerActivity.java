@@ -59,6 +59,8 @@ public class ConferenceSpeakerActivity extends BaseActivity implements IConferen
     private String conferenceCode;
     private String idGroup;
 
+    private static String SELECTED_LANGUAGE;
+
     private static final int ITEM_SPAN_COUNT = 3;
     private static final String KEY_CHATS = "chats";
     private static final String KEY_GROUPS = "groups";
@@ -80,22 +82,29 @@ public class ConferenceSpeakerActivity extends BaseActivity implements IConferen
         getIntentData();
     }
 
-    private void promptSpeechInput() {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO},1);
-        intentRecognition = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intentRecognition.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intentRecognition.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,
-                this.getPackageName());
-        intentRecognition.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS,true);
-        speechRecognizer.startListening(intentRecognition);
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new GridLayoutManager(this, ITEM_SPAN_COUNT));
+
+        SELECTED_LANGUAGE = SharedPrefUtils.getStringSharedPref(Keys.PILIHAN_BAHASA.getKey(), Keys.BAHASA_ID.getKey());
+    }
+
+    private void promptSpeechInput() {
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO},1);
+
+        intentRecognition = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+
+        intentRecognition.putExtra(RecognizerIntent.EXTRA_LANGUAGE, SELECTED_LANGUAGE);
+        intentRecognition.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, SELECTED_LANGUAGE);
+        intentRecognition.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, SELECTED_LANGUAGE);
+        intentRecognition.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, SELECTED_LANGUAGE);
+        intentRecognition.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intentRecognition.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, this.getPackageName());
+        intentRecognition.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS,true);
+
+        speechRecognizer.startListening(intentRecognition);
     }
 
     private void getIntentData () {

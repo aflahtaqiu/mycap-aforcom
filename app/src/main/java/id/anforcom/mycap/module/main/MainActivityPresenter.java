@@ -1,5 +1,7 @@
 package id.anforcom.mycap.module.main;
 
+import android.text.TextUtils;
+
 import id.anforcom.mycap.model.Keys;
 import id.anforcom.mycap.utils.SharedPrefUtils;
 
@@ -14,18 +16,18 @@ class MainActivityPresenter {
 
     private IMainActivityView view;
 
+    private static final String EMPTY_STRING = "";
+
     MainActivityPresenter(IMainActivityView view) {
         this.view = view;
     }
 
     void setBahasa () {
-        SharedPrefUtils.setBooleanSharedPref(Keys.ID.getKey(), true);
-        SharedPrefUtils.setBooleanSharedPref(Keys.ENGLISH.getKey(), false);
+        SharedPrefUtils.setStringSharedPref(Keys.PILIHAN_BAHASA.getKey(), Keys.BAHASA_ID.getKey());
     }
 
     void setEnglish () {
-        SharedPrefUtils.setBooleanSharedPref(Keys.ID.getKey(), false);
-        SharedPrefUtils.setBooleanSharedPref(Keys.ENGLISH.getKey(), true);
+        SharedPrefUtils.setStringSharedPref(Keys.PILIHAN_BAHASA.getKey(), Keys.EN_US.getKey());
     }
 
     void saveDataToSharedPreference (String userName) {
@@ -33,5 +35,11 @@ class MainActivityPresenter {
 
         view.hideLoading();
         view.moveToDashboard();
+    }
+
+    boolean isLanguageSelectedEmpty () {
+        String languageSelected = SharedPrefUtils.getStringSharedPref(Keys.PILIHAN_BAHASA.getKey(), EMPTY_STRING);
+
+        return TextUtils.isEmpty(languageSelected);
     }
 }

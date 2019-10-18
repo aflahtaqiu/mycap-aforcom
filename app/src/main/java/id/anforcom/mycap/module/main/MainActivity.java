@@ -31,7 +31,7 @@ public class MainActivity extends BaseActivity implements IMainActivityView{
 
     private MainActivityPresenter presenter;
 
-    private static String EMPTY_NAME_FIELD = "Harus mengisi nama";
+    private static String EMPTY_NAME_FIELD = "Pastikan sudah memilih bahasa dan mengisi nama";
     private static String LOADING = "Loading ...";
 
     @Override
@@ -43,10 +43,14 @@ public class MainActivity extends BaseActivity implements IMainActivityView{
         presenter = new MainActivityPresenter(this);
     }
 
+    private boolean isValid () {
+        return !TextUtils.isEmpty(etNamaUser.getText().toString()) && !presenter.isLanguageSelectedEmpty();
+    }
+
     @OnClick(R.id.btn_start)
     public void onStartBtnClicked () {
 
-        if (!TextUtils.isEmpty(etNamaUser.getText().toString())) {
+        if (isValid()) {
             showLoading(LOADING);
             presenter.saveDataToSharedPreference(etNamaUser.getText().toString());
         } else {

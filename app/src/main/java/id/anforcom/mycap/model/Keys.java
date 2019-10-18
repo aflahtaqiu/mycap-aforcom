@@ -11,11 +11,11 @@ public enum Keys {
 
     BUNDLE("bundle"),
     CODE("code"),
-    ENGLISH("english"),
+    EN_US("en-US"),
     FCM_TOKEN("fcm_token"),
-    ID("bahasa_indonesia"),
+    BAHASA_ID("bahasa_indonesia"),
     ID_GROUP("id_group"),
-    ID_USER("id_user"),
+    ID_USER("id-ID"),
     NAMA_USER("nama_user"),
     PILIHAN_BAHASA("pilihan_bahasa");
 

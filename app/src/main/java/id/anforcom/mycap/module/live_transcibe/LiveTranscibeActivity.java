@@ -6,13 +6,11 @@ import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.core.app.ActivityCompat;
 
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +19,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import id.anforcom.mycap.R;
 import id.anforcom.mycap.base.BaseActivity;
+import id.anforcom.mycap.model.Keys;
+import id.anforcom.mycap.utils.SharedPrefUtils;
 
 public class LiveTranscibeActivity extends BaseActivity {
 
@@ -36,6 +36,7 @@ public class LiveTranscibeActivity extends BaseActivity {
     private static boolean IS_SPEECH_RECOGNIZING = false;
 
     private static String STRING_RESULT;
+    private static String SELECTED_LANGUAGE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +52,7 @@ public class LiveTranscibeActivity extends BaseActivity {
     protected void onStart() {
         super.onStart();
         STRING_RESULT = "";
+        SELECTED_LANGUAGE = SharedPrefUtils.getStringSharedPref(Keys.PILIHAN_BAHASA.getKey(), Keys.BAHASA_ID.getKey());
 
         promptSpeechInput();
     }
@@ -65,6 +67,10 @@ public class LiveTranscibeActivity extends BaseActivity {
 
         intentRecognition = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 
+        intentRecognition.putExtra(RecognizerIntent.EXTRA_LANGUAGE, SELECTED_LANGUAGE);
+        intentRecognition.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, SELECTED_LANGUAGE);
+        intentRecognition.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, SELECTED_LANGUAGE);
+        intentRecognition.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, SELECTED_LANGUAGE);
         intentRecognition.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intentRecognition.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, this.getPackageName());
         intentRecognition.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS,true);

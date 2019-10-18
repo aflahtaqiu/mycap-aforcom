@@ -63,6 +63,8 @@ public class ChatRoomActivity extends BaseActivity implements IChatRoomView {
     private String idGroup;
     private List<Chat> chats = new ArrayList<>();
 
+    private static String SELECTED_LANGUAGE;
+
     private static final String KEY_CHATS = "chats";
     private static final String KEY_GROUPS = "groups";
     private static final String KEY_MESSAGE = "message";
@@ -90,6 +92,7 @@ public class ChatRoomActivity extends BaseActivity implements IChatRoomView {
     @Override
     protected void onStart() {
         super.onStart();
+        SELECTED_LANGUAGE = SharedPrefUtils.getStringSharedPref(Keys.PILIHAN_BAHASA.getKey(), Keys.BAHASA_ID.getKey());
 
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         databaseReference = FirebaseDatabase.getInstance().getReference(KEY_GROUPS).child(chatCode).child(KEY_CHATS);
@@ -120,12 +123,17 @@ public class ChatRoomActivity extends BaseActivity implements IChatRoomView {
 
     private void promptSpeechInput() {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO},1);
+
         intentRecognition = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intentRecognition.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intentRecognition.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,
-                this.getPackageName());
+
+        intentRecognition.putExtra(RecognizerIntent.EXTRA_LANGUAGE, SELECTED_LANGUAGE);
+        intentRecognition.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, SELECTED_LANGUAGE);
+        intentRecognition.putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, SELECTED_LANGUAGE);
+        intentRecognition.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, SELECTED_LANGUAGE);
+        intentRecognition.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intentRecognition.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, this.getPackageName());
         intentRecognition.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS,true);
+
         speechRecognizer.startListening(intentRecognition);
     }
 
