@@ -60,9 +60,6 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
 
-    //Apache common text
-    implementation 'org.apache.commons:commons-text:1.8'
-
     //firebase
     implementation 'com.google.firebase:firebase-core:17.2.0'
     implementation 'com.google.firebase:firebase-messaging:20.0.0'

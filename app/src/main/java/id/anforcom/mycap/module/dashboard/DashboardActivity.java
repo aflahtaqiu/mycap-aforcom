@@ -10,8 +10,7 @@ import android.widget.ImageView;
 
 import androidx.cardview.widget.CardView;
 
-import org.apache.commons.text.CharacterPredicates;
-import org.apache.commons.text.RandomStringGenerator;
+import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -42,13 +41,13 @@ public class DashboardActivity extends BaseActivity implements IDashboardView {
     @BindView(R.id.iv_microphone)
     ImageView ivMicrophone;
 
-    private RandomStringGenerator stringGenerator;
     private DashboardPresenter presenter;
 
     private final char CHAR_G = 'G';
     private final char CHAR_C = 'C';
     private static final String EMPTY_CODE = "Maaf, masukkan kode conference atau chat terlebih dahulu";
     private static final String WRONG_CODE_MESSAGE = "Maaf, code yang Anda masukkan salah";
+    private static final String RANDOM_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
     private final int CODE_LENGTH = 5;
     private final int ZERO = 0;
 
@@ -58,11 +57,16 @@ public class DashboardActivity extends BaseActivity implements IDashboardView {
         setContentView(R.layout.activity_dashboard);
         ButterKnife.bind(this);
         presenter = new DashboardPresenter(this);
+    }
 
-        stringGenerator = new RandomStringGenerator.Builder()
-                .withinRange('0', 'Z')
-                .filteredBy(CharacterPredicates.LETTERS, CharacterPredicates.DIGITS)
-                .build();
+    private String getRandomString(int randomStringLength) {
+        StringBuilder stringBuilder = new StringBuilder();
+        Random rnd = new Random();
+        while (stringBuilder.length() < randomStringLength) { // length of the random string.
+            int index = (int) (rnd.nextFloat() * RANDOM_CHARS.length());
+            stringBuilder.append(RANDOM_CHARS.charAt(index));
+        }
+        return stringBuilder.toString();
     }
 
     @OnClick(R.id.btn_join)
@@ -84,13 +88,13 @@ public class DashboardActivity extends BaseActivity implements IDashboardView {
 
     @OnClick(R.id.cardview_group_chat)
     public void onCardViewGroupChatClicked () {
-        String code = CHAR_G + stringGenerator.generate(CODE_LENGTH);
+        String code = CHAR_G + getRandomString(CODE_LENGTH);
         presenter.createGroup(code);
     }
 
     @OnClick(R.id.cardview_classroom)
     public void onCardViewClassRoomClicked () {
-        String code = CHAR_C + stringGenerator.generate(CODE_LENGTH);
+        String code = CHAR_C + getRandomString(CODE_LENGTH);
         presenter.createGroup(code);
     }
 
