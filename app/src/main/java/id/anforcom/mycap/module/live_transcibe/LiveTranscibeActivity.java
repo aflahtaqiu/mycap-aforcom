@@ -6,13 +6,15 @@ import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,8 +31,11 @@ public class LiveTranscibeActivity extends BaseActivity {
     TextView textView;
 
     private SpeechRecognizer speechRecognizer;
+    private Intent intentRecognition;
 
     private static boolean IS_SPEECH_RECOGNIZING = false;
+
+    private static String STRING_RESULT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +50,8 @@ public class LiveTranscibeActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        STRING_RESULT = "";
+
         promptSpeechInput();
     }
 
@@ -56,11 +63,10 @@ public class LiveTranscibeActivity extends BaseActivity {
     private void promptSpeechInput() {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO},1);
 
-        Intent intentRecognition = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intentRecognition.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intentRecognition.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,
-                this.getPackageName());
+        intentRecognition = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+
+        intentRecognition.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intentRecognition.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, this.getPackageName());
         intentRecognition.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS,true);
 
         speechRecognizer.startListening(intentRecognition);
@@ -101,17 +107,48 @@ public class LiveTranscibeActivity extends BaseActivity {
 
         @Override
         public void onResults(Bundle bundle) {
-            textView.append(".");
+
+            List<String> listOfWords = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+
+            assert listOfWords != null;
+
+            STRING_RESULT += listOfWords.get(0);
+            textView.setText(STRING_RESULT);
+
+            try {
+                Thread.sleep(100);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            speechRecognizer.stopListening();
+            speechRecognizer.setRecognitionListener(this);
+            speechRecognizer.startListening(intentRecognition);
         }
 
         @Override
         public void onPartialResults(Bundle bundle) {
-            ArrayList<String> matches = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-            if (matches != null && matches.size() != 0) {
-                textView.setText(matches.get(0));
-            }else{
-                Toast.makeText(LiveTranscibeActivity.this, "Tidak dapat mendengar kata-kata", Toast.LENGTH_LONG).show();
+
+            ArrayList<String> results = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+
+            String b = "";
+            if (results != null) {
+                if (results.size() > 6) {
+                    results.clear();
+                }
+                for (String p : results) {
+                    b += p;
+                }
             }
+
+            textView.setText(STRING_RESULT + b);
+
+//            ArrayList<String> matches = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+//            if (matches != null && matches.size() != 0) {
+//                textView.setText(matches.get(0));
+//            }else{
+//                Toast.makeText(LiveTranscibeActivity.this, "Tidak dapat mendengar kata-kata", Toast.LENGTH_LONG).show();
+//            }
         }
 
         @Override
