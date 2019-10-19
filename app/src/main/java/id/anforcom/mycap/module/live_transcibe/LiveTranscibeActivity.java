@@ -118,7 +118,7 @@ public class LiveTranscibeActivity extends BaseActivity {
 
             assert listOfWords != null;
 
-            STRING_RESULT += listOfWords.get(0);
+            STRING_RESULT += listOfWords.get(0) +".\n\n";
             textView.setText(STRING_RESULT);
 
             try {

@@ -22,6 +22,12 @@ class MainActivityPresenter {
         this.view = view;
     }
 
+    String getSelectedLanguage () {
+        String languageSelected = SharedPrefUtils.getStringSharedPref(Keys.PILIHAN_BAHASA.getKey(), EMPTY_STRING);
+
+        return languageSelected;
+    }
+
     void setBahasa () {
         SharedPrefUtils.setStringSharedPref(Keys.PILIHAN_BAHASA.getKey(), Keys.BAHASA_ID.getKey());
     }

@@ -59,6 +59,7 @@ public class ConferenceSpeakerActivity extends BaseActivity implements IConferen
     private String conferenceCode;
     private String idGroup;
 
+    private static String STRING_RESULT;
     private static String SELECTED_LANGUAGE;
 
     private static final int ITEM_SPAN_COUNT = 3;
@@ -88,6 +89,7 @@ public class ConferenceSpeakerActivity extends BaseActivity implements IConferen
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new GridLayoutManager(this, ITEM_SPAN_COUNT));
 
+        STRING_RESULT = "";
         SELECTED_LANGUAGE = SharedPrefUtils.getStringSharedPref(Keys.PILIHAN_BAHASA.getKey(), Keys.BAHASA_ID.getKey());
     }
 
@@ -206,6 +208,7 @@ public class ConferenceSpeakerActivity extends BaseActivity implements IConferen
         @Override
         public void onResults(Bundle bundle) {
             String userName = SharedPrefUtils.getStringSharedPref(Keys.NAMA_USER.getKey(), "");
+
             ArrayList<String> matches = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
             if (matches != null && matches.size() != 0) {
 
@@ -218,6 +221,16 @@ public class ConferenceSpeakerActivity extends BaseActivity implements IConferen
             }else{
                 Toast.makeText(ConferenceSpeakerActivity.this, "Tidak dapat mendengar kata-kata", Toast.LENGTH_LONG).show();
             }
+
+            try {
+                Thread.sleep(100);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            speechRecognizer.stopListening();
+            speechRecognizer.setRecognitionListener(this);
+            speechRecognizer.startListening(intentRecognition);
         }
 
         @Override

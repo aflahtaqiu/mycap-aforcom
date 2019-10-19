@@ -37,7 +37,7 @@ public class ConferenceListenerAdapter extends RecyclerView.Adapter<ConferenceLi
     public COnferenceListenerViewHolder onCreateViewHolder(ViewGroup parent,
                                                            int viewType) {
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_messages_recieve, parent, false);
+                .inflate(R.layout.item_message, parent, false);
         return new COnferenceListenerViewHolder(v);
     }
 
