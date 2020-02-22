@@ -2,6 +2,8 @@ package id.anforcom.mycap.module.dashboard;
 
 import android.text.TextUtils;
 
+import java.util.Random;
+
 import id.anforcom.mycap.data.repository.ApiRepository;
 import id.anforcom.mycap.data.source.ApiDataSource;
 import id.anforcom.mycap.di.Injector;
@@ -26,14 +28,20 @@ class DashboardPresenter {
     private final int ZERO = 0;
     private final String LOADING_MESSAGE = "Loading...";
     private static final String ERROR_TIMEOUT = "timeout";
+    private static final String ERROR_BAD_REQUEST = "Bad Request";
+
+    private static final String RANDOM_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+    private final int CODE_LENGTH = 5;
 
     DashboardPresenter(IDashboardView view) {
         this.view = view;
         this.repository = Injector.provideApiRepository();
     }
 
-    void createGroup (String groupCode) {
+    void createGroup (char charCode) {
         view.showProgress(LOADING_MESSAGE);
+
+        String groupCode = charCode + getRandomString(CODE_LENGTH);
         String userName = SharedPrefUtils.getStringSharedPref(Keys.NAMA_USER.getKey(), "");
 
         repository.createGroup(groupCode, userName, new ApiDataSource.GroupCallback() {
@@ -56,8 +64,8 @@ class DashboardPresenter {
 
             @Override
             public void onError(String errorMessage) {
-                if (TextUtils.equals(errorMessage, ERROR_TIMEOUT))
-                    createGroup(groupCode);
+                if (TextUtils.equals(errorMessage, ERROR_TIMEOUT) || TextUtils.equals(errorMessage, ERROR_BAD_REQUEST))
+                    createGroup(charCode);
                 else  {
                     view.hideProgress();
                     view.showMessage(errorMessage);
@@ -98,5 +106,15 @@ class DashboardPresenter {
                 }
             }
         });
+    }
+
+    private String getRandomString(int randomStringLength) {
+        StringBuilder stringBuilder = new StringBuilder();
+        Random rnd = new Random();
+        while (stringBuilder.length() < randomStringLength) { // length of the random string.
+            int index = (int) (rnd.nextFloat() * RANDOM_CHARS.length());
+            stringBuilder.append(RANDOM_CHARS.charAt(index));
+        }
+        return stringBuilder.toString();
     }
 }

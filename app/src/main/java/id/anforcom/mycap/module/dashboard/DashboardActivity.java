@@ -59,15 +59,7 @@ public class DashboardActivity extends BaseActivity implements IDashboardView {
         presenter = new DashboardPresenter(this);
     }
 
-    private String getRandomString(int randomStringLength) {
-        StringBuilder stringBuilder = new StringBuilder();
-        Random rnd = new Random();
-        while (stringBuilder.length() < randomStringLength) { // length of the random string.
-            int index = (int) (rnd.nextFloat() * RANDOM_CHARS.length());
-            stringBuilder.append(RANDOM_CHARS.charAt(index));
-        }
-        return stringBuilder.toString();
-    }
+
 
     @OnClick(R.id.btn_join)
     public void onBtnJoinClicked () {
@@ -88,14 +80,12 @@ public class DashboardActivity extends BaseActivity implements IDashboardView {
 
     @OnClick(R.id.cardview_group_chat)
     public void onCardViewGroupChatClicked () {
-        String code = CHAR_G + getRandomString(CODE_LENGTH);
-        presenter.createGroup(code);
+        presenter.createGroup(CHAR_G);
     }
 
     @OnClick(R.id.cardview_classroom)
     public void onCardViewClassRoomClicked () {
-        String code = CHAR_C + getRandomString(CODE_LENGTH);
-        presenter.createGroup(code);
+        presenter.createGroup(CHAR_C);
     }
 
     @OnClick(R.id.iv_microphone)

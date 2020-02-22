@@ -1,5 +1,7 @@
 package id.anforcom.mycap.data.remote;
 
+import android.util.Log;
+
 import com.google.gson.JsonObject;
 
 import java.util.List;
@@ -24,6 +26,7 @@ public class ApiRemoteDataSource extends BaseRemoteDataSource implements ApiData
 
     private static int RESPONSE_OK = 200;
     private static int RESPONSE_CREATED = 201;
+    private static int RESPONSE_BAD_REQUEST = 404;
     private static int RESPONSE_NOT_FOUND = 404;
 
     private static String ERROR_GET_ALL_GROUP = "Maaf tidak ada data group";
@@ -32,6 +35,8 @@ public class ApiRemoteDataSource extends BaseRemoteDataSource implements ApiData
     private static String ERROR_JOIN_GROUP = "Maaf terjadi kesalahan dalam join group.";
     private static String ERROR_NOT_FOUND_CODE = "Code Anda salah. Pastikan kembali code yang Anda masukkan";
     private static String ERROR_LEFT_GROUP = "Maaf terjadi kesalahan dalam left group";
+
+    private static String ERROR_BAD_REQUEST = "Bad Request";
 
     private static String KEY_ADMIN = "admin";
     private static String KEY_GROUP_CODE = "group_code";
@@ -95,7 +100,9 @@ public class ApiRemoteDataSource extends BaseRemoteDataSource implements ApiData
             public void onResponse(Call<Group> call, Response<Group> response) {
                 if (response.code() == RESPONSE_CREATED)
                     callback.onSuccess(response.body());
-                else {
+                else if (response.code() == RESPONSE_BAD_REQUEST){
+                    callback.onError(ERROR_BAD_REQUEST);
+                } else {
                     callback.onError(ERROR_CREATE_GROUP);
                 }
 
@@ -122,8 +129,12 @@ public class ApiRemoteDataSource extends BaseRemoteDataSource implements ApiData
                     callback.onSuccess(response.body());
                 else if (response.code() == RESPONSE_NOT_FOUND)
                     callback.onError(ERROR_NOT_FOUND_CODE);
-                else
+                else {
+                    Log.e("tess", String.valueOf(response.code()));
+//                    Log.e("tess", response.body().toString());
                     callback.onError(ERROR_JOIN_GROUP);
+                }
+
             }
 
             @Override
