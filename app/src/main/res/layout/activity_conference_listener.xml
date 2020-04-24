@@ -41,7 +41,6 @@
         android:layout_marginLeft="@dimen/_25sdp" />
 
     <androidx.core.widget.NestedScrollView
-        android:id="@+id/nestedscrollview_conference_speaker"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:fillViewport="true"

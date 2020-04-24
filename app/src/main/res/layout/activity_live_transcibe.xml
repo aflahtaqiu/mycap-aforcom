@@ -28,7 +28,6 @@
         android:textColor="@color/colorWhite"/>
 
     <androidx.core.widget.NestedScrollView
-        android:id="@+id/nestedscrollviwe_live_transcibe"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:fillViewport="true"
